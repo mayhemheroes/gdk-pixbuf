@@ -22,7 +22,14 @@ RUN rm -rf gdk-pixbuf/mayhem
 ADD https://ftp.gnome.org/pub/gnome/sources/glib/2.64/glib-2.64.2.tar.xz $SRC
 RUN tar xvJf $SRC/glib-2.64.2.tar.xz
 
-RUN git clone --depth 1 https://github.com/glennrp/libpng.git && git clone --depth 1 https://github.com/MozillaSecurity/fuzzdata.git && mkdir corpus && find $SRC/gdk-pixbuf/tests/ \( -name '*.jpeg' -o -name '*.jpg' -o -name '*.png' \) -exec cp -v '{}' corpus/ ';' && find $SRC/libpng -name "*.png" | grep -v crashers | xargs cp -t corpus/ && mv $SRC/fuzzdata/samples/gif/*.gif corpus/ && zip -q $SRC/gdk-pixbuf_seed_corpus.zip corpus/* && rm -rf libpng fuzzdata corpus
+RUN wget -q -O libpng.tar.gz https://github.com/pnggroup/libpng/archive/refs/heads/master.tar.gz && \
+    tar xzf libpng.tar.gz && \
+    mkdir corpus && \
+    find $SRC/gdk-pixbuf/tests/ \( -name '*.jpeg' -o -name '*.jpg' -o -name '*.png' \) -exec cp -v '{}' corpus/ ';' && \
+    find $SRC/libpng-master -name "*.png" | grep -v crashers | xargs cp -t corpus/ && \
+    find $SRC/gdk-pixbuf/tests/ -name "*.gif" -exec cp -v '{}' corpus/ ';' && \
+    zip -q $SRC/gdk-pixbuf_seed_corpus.zip corpus/* && \
+    rm -rf libpng.tar.gz libpng-master corpus
 
 ADD https://raw.githubusercontent.com/google/fuzzing/master/dictionaries/png.dict $SRC/png.dict
 ADD https://raw.githubusercontent.com/google/fuzzing/master/dictionaries/jpeg.dict $SRC/jpeg.dict
