@@ -1,0 +1,10 @@
+project: gdk-pixbuf
+target: animation_fuzzer
+
+cmds:
+  - cmd: /mayhem/build/animation_fuzzer
+    libfuzzer: true
+
+testsuite:
+  - https://$MAYHEM_DOMAIN/$MAYHEM_PROJECT/$MAYHEM_TARGET/testsuite.tar
+  - file://mayhem/animation_fuzzer/testsuite
